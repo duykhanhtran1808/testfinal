@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- title has been set manually instead of dynamically, in your pug tempalte you was actually trying to insert the value of a variable dynamically  -->
+
+    <title>d1</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+
+    <!-- main css link update -->
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="row">
+        <%- include('./partials/sideBar'); %>
+        <div class="mainSectionContainer col-10 col-md-8 col-lg-8">
+          <div class="titleContainer">
+            <!-- value of heading has been set manually instead of dynamically -->
+            <h1 id="firstH1ProfilePage"></h1>
+          </div>
+          <!-- code from block content -->
+          <!-- store the error messages here  -->
+          <span class="errorMessage"></span>
+          <% if (locals.profileUser) { %>
+          <script>
+            var profileUser = <%- JSON.stringify(profileUser) %>;
+            // profileUser = JSON.parse(profileUser);
+            var profileUserId = profileUser._id;
+            var selectedTab = <%- JSON.stringify(selectedTab) %>;
+            // selectedTab = JSON.parse(selectedTab);
+          </script>
+          <div class="profileHeaderContainer">
+            <div class="coverPhotoSection">
+              <div class="coverPhotoContainer">
+                <img src="/images/coverPic.jpg" alt="User's cover photo" />
+                <!-- <button class="coverPhotoButton" data-toggle="modal" data-target="#coverPhotoUploadModal">
+                            <i class="fas fa-camera"></i>
+                        </button> -->
+              </div>
+              <div class="userImageContainer">
+                <img src="/images/profilePic.jpeg" alt="User profile image" />
+                <!-- <button class="profilePictureButton" data-toggle="modal" data-target="#imageUploadModal">
+                            <i class="fas fa-camera"></i>
+                        </button> -->
+              </div>
+            </div>
+            <div class="profileButtonsContainer">
+              <a class="profileButton" href="newMessage.html" id="profileMessageButton">
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+            <div class="userDetailsContainer">
+              <span class="displayName"></span>
+              <span class="username"></span>
+              <div class="followersContainer">
+                <a href="/followersAndFollowingPage" id="followingLink">
+                  <span id="followingValue" class="value">0</span>
+                  <span>Following</span>
+                </a>
+                <a href="/followersAndFollowingPage" id="followersLink">
+                  <span id="followersValue" class="value">0</span>
+                  <span>Followers</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="tabsContainer">
+            <a href="" id="postsTab" class="tab">
+              <span>Posts</span>
+            </a>
+
+            <a href="" id="repliesTab" class="tab">
+              <span>Replies</span>
+            </a>
+          </div>
+
+          <div class="pinnedPostContainer"></div>
+          <div class="postsContainer"></div>
+
+          <% } else { %>
+          <script>
+            var errorMessageSpan = document.querySelector(".errorMessage");
+            errorMessageSpan.textContent = "This user does not exist";
+          </script>
+          <% } %>
+
+          <!-- code from mixin createPostModals -->
+
+          <!-- Code from Reply Modal -->
+          <div
+            id="replyModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="replyModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="replyModalLabel" class="modal-title">Reply</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div id="originalPostContainer"></div>
+                  <div class="postFormContainer">
+                    <div class="userImageContainer">
+                      <img
+                        src="/images/profilePic.jpeg"
+                        alt="User's profile picture"
+                      />
+                    </div>
+                    <div class="textareaContainer">
+                      <textarea
+                        id="replyTextarea"
+                        placeholder="Comment something"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    id="submitReplyButton"
+                    class="btn btn-primary"
+                    type="button"
+                    disabled
+                  >
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- code from reply modal over  -->
+
+          <!-- Delete Post Modal -->
+          <div
+            id="deletePostModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="deletePostModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="deletePostModalLabel" class="modal-title">
+                    Delete the post?
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>You won't be able to delete this.</p>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    id="deletePostButton"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- code from delete post modal over -->
+
+          <!--code form Confirm Pin Modal -->
+          <div
+            id="confirmPinModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="confirmPinModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="confirmPinModalLabel" class="modal-title">
+                    Pin this post?
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    This post will appear at the top of your profile. You can
+                    only pin one post.
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="pinPostButton"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Pin
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- code from confirm pin modal over  -->
+
+          <!--code from Unpin Modal -->
+          <div
+            id="unpinModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="unpinModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="unpinModalLabel" class="modal-title">
+                    Unpin the post?
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>This post will be unpinned.</p>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="unpinPostButton"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Pin
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- code form unpin modal over  -->
+          <!-- code from mixin createPostModals over-->
+
+          <!-- code from imageUploadModal -->
+          <div
+            id="imageUploadModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="imageUploadModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="imageUploadModalLabel" class="modal-title">
+                    Upload a new profile picture
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input id="filePhoto" type="file" name="filePhoto" />
+                  <div class="imagePreviewContainer">
+                    <img id="imagePreview" />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    class="btn btn-secondary"
+                    type="button"
+                    data-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="imageUploadButton"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- code form imageUploadModal over  -->
+
+          <!-- code form coverPhotoUploadModal over  -->
+          <div
+            id="coverPhotoUploadModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="coverPhotoModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="coverPhotoModalLabel" class="modal-title">
+                    Upload a new cover photo
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input id="coverPhoto" type="file" name="filePhoto" />
+                  <div class="imagePreviewContainer">
+                    <img id="coverPreview" />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    class="btn btn-secondary"
+                    type="button"
+                    data-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="coverPhotoButton"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- code form coverPhotoUploadModal over  -->
+          <!-- Content from block content over -->
+        </div>
+        <div class="d-none d-md-block col-md-2 col-lg-2"></div>
+      </div>
+    </div>
+    <div id="notificationList"></div>
+
+    <!-- default scripts in layout-min file  -->
+    <script src="/js/common.js"></script>
+    <script src="/js/clientSocket.js"></script>
+    <!-- default scripts in layout-min file over -->
+    <!-- Code from block scripts -->
+    <script src="/js/profile.js"></script>
+    <!-- Code from block scripts over -->
+
+  </body>
+</html>

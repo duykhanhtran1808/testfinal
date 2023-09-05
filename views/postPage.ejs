@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- title has been set manually instead of dynamically, in your pug tempalte you was actually trying to insert the value of a variable dynamically  -->
+
+    <title>View Post</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- main css link update -->
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+ <!-- Code from Reply Modal -->
+ <div
+ id="replyModal"
+ class="modal fade"
+ tabindex="-1"
+ role="dialog"
+ aria-labelledby="replyModalLabel"
+ aria-hidden="true"
+>
+ <div class="modal-dialog" role="document">
+   <div class="modal-content">
+     <div class="modal-header">
+       <h5 id="replyModalLabel" class="modal-title">Reply</h5>
+       <button
+         type="button"
+         class="close"
+         data-dismiss="modal"
+         aria-label="Close"
+       >
+         <span aria-hidden="true">&times;</span>
+       </button>
+     </div>
+     <div class="modal-body">
+       <div id="originalPostContainer"></div>
+       <div class="postFormContainer">
+         <div class="userImageContainer">
+           <img
+             src="/images/profilePic.jpeg"
+             alt="User's profile picture"
+           />
+         </div>
+         <div class="textareaContainer">
+           <textarea
+             id="replyTextarea"
+             placeholder="Comment something"
+           ></textarea>
+         </div>
+       </div>
+     </div>
+     <div class="modal-footer">
+       <button
+         type="button"
+         class="btn btn-secondary"
+         data-dismiss="modal"
+       >
+         Close
+       </button>
+       <button
+         id="submitReplyButton"
+         class="btn btn-primary"
+         type="button"
+         disabled
+       >
+         Reply
+       </button>
+     </div>
+   </div>
+ </div>
+</div>
+<!-- code from reply modal over  -->
+
+    <div class="wrapper">
+        <div class="row">
+            <%- include('./partials/sideBar'); %>
+            <div class="mainSectionContainer col-10 col-md-8 col-lg-8">
+                <div class="titleContainer">
+                    <!-- value of heading has been set manually instead of dynamically -->
+                    <h1>View Post</h1>
+                </div>
+                    <!-- code from block content -->
+                    
+                    
+                    <div class="postsContainer">
+                        <div class='post ${largeFontClass}' data-id='${postData._id}'>
+                            <!-- <div class='postActionContainer'>
+                                ${retweetText}
+                            </div> -->
+                            <div class='mainContentContainer'>
+                                <div class='userImageContainer'>
+                                    <img src='public/images/profilePic.jpeg'>
+                                </div>
+                                <div class='postContentContainer'>
+                                    <!-- <div class='pinnedPostText'>${pinnedPostText}</div> -->
+                                    <div class='header'>
+                                        <a href='/profile/${postedBy.username}' class='displayName'></a>
+                                        <span class='username'></span>
+                                        <span class='date'></span>
+                                        <!-- ${buttons} -->
+                                    </div>
+                                    <!-- ${replyFlag} -->
+
+                                    <div class='replyFlag'>
+                                        Replying to <a href='/profile/${replyToUsername}'><a>
+                                    </div>
+                                    <div class='postBody'>
+                                        <span></span>
+                                    </div>
+                                    <div class='postFooter'>
+                                        <div class='postButtonContainer'>
+                                            <button data-toggle='modal' data-target='#replyModal'>
+                                                <i class='far fa-comment'></i>
+                                            </button>
+                                        </div>
+                                        <div class='postButtonContainer green'>
+                                            <button class='retweetButton ${retweetButtonActiveClass}'>
+                                                <i class='fas fa-retweet'></i>
+                                                <!-- <span>${postData.retweetUsers.length || ""}</span> -->
+                                            </button>
+                                        </div>
+                                        <div class='postButtonContainer red'>
+                                            <button class='likeButton ${likeButtonActiveClass}'>
+                                                <i class='far fa-heart'></i>
+                                                <!-- <span>${postData.likes.length || ""}</span> -->
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            <div class="d-none d-md-block col-md-2 col-lg-2"></div>
+        </div>
+    </div>
+    <div id="notificationList"></div>
+
+    <script>
+        // var userLoggedIn = '<%- JSON.stringify(userLoggedIn) %>';
+        var postId = '<%- JSON.stringify(postId) %>';
+      </script>
+
+    <!-- Code from block scripts -->
+    <script src="/js/postPage.js"></script>
+    <!-- Code from block scripts over -->
+
+    
+    <!-- default scripts in layout-min file  -->
+    <script src="/js/common.js"></script>
+    <script src="/js/clientSocket.js"></script>
+    <!-- default scripts in layout-min file over -->
+
+
+</body>
+
+</html>

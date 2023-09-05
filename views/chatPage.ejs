@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- title has been set manually instead of dynamically, in your pug tempalte you was actually trying to insert the value of a variable dynamically  -->
+
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- main css link update -->
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="row">
+            <%- include('./partials/sideBar'); %>
+            <div class="mainSectionContainer col-10 col-md-8 col-lg-8">
+                <div class="titleContainer">
+                    <!-- value of heading has been set manually instead of dynamically -->
+                    <h1>Chat</h1>
+                </div>
+                <span class="errorMessage"></span>
+                <% if (locals.errorMessage) { %>
+                    <script>
+                    var errorMessage = <%- JSON.stringify(errorMessage) %>;
+                    $(".errorMessage").text(errorMessage)
+                    </script>
+                <% } else { %>
+                    <script>
+                        var chat = <%- JSON.stringify(chat) %>;
+                        var chatId = chat._id;
+                    </script>
+                    <div class="chatPageContainer">
+                    
+                        <div class="chatTitleBarContainer">
+    
+                            <!-- static code form create image  modal  -->
+                            <div class="chatImagesContainer">
+                                <!-- Show the count of remaining users if there are more than 3 users -->
+                                <!-- <div class="userCount">
+                                    <span>{{ remainingUsers }}</span>
+                                </div> -->
+                                <img src="/images/profilePic.jpeg" alt="User's profile picture">
+                            </div>
+                            <!-- static code form create image modal over  -->
+                            <!-- sender name  -->
+                            <span class='senderName'></span>
+                            <span id="chatName" data-toggle="modal" data-target="#chatNameModal"></span>
+                        </div>
+                        <div class="mainContentContainer">
+                            <!--=========== loadingSpinner image==============  -->
+                            <!-- 
+                                <div class="loadingSpinnerContainer">
+                                <img src="public/images/loadingSpinner.gif" alt="Loading spinner">
+                            </div>
+                         -->
+                            <div class="chatContainer"  data-room="chat._id">
+                                <ul class="chatMessages" >
+                                    
+                                </ul>
+    
+                                <!-- =======typing dots image ========= -->
+                                <!-- 
+                                    <div class="typingDots">
+                                    <img src="public/images/dots.gif" alt="Typing dots">
+                                </div> 
+                            -->
+                                <div class="footer">
+                                    <textarea name="messageInput" placeholder="Type a message..." class="inputTextbox"></textarea>
+                                    <button class="sendMessageButton"><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+                <!-- code from block content -->
+                
+                
+                <!-- code form the chat name modal  -->
+                <div id="chatNameModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chatNameModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 id="chatNameModalLabel" class="modal-title">Change the chat name</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input id="chatNameTextbox" type="text" placeholder="Enter a name for this chat" value="Enter a name to change">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button id="chatNameButton" type="button" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <!-- code from the chat name modal over  -->
+                
+                <!-- Content from block content over -->
+            </div>
+            <div class="d-none d-md-block col-md-2 col-lg-2"></div>
+        </div>
+    </div>
+    <div id="notificationList"></div>
+   
+    <!-- default scripts in layout-min file  -->
+    <script src="/js/common.js"></script>
+    <script src="/js/clientSocket.js"></script>
+    <!-- default scripts in layout-min file over -->
+ <!-- Code from block scripts -->
+ <script src="/js/chatPage.js"></script>
+ <!-- Code from block scripts over -->
+
+</body>
+
+</html>

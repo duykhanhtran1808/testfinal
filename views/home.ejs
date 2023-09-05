@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- title has been set manually instead of dynamically, in your pug tempalte you was actually trying to insert the value of a variable dynamically  -->
+
+    <title>Home</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+
+    <!-- main css link update -->
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+
+  <body>
+
+    <div class="wrapper">
+      <div class="row">
+        <%- include('./partials/sideBar'); %>
+        <div class="mainSectionContainer col-10 col-md-8 col-lg-8">
+          <div class="titleContainer">
+            <!-- value of heading has been set manually instead of dynamically -->
+            <h1>Home</h1>
+          </div>
+          <!-- code from block content -->
+          <!-- code from mixin createPostForm -->
+          <div class="postFormContainer">
+            <div class="userImageContainer">
+              <img
+                src="/images/profilePic.jpeg"
+                alt="User's profile picture"
+              />
+            </div>
+            <div class="textareaContainer">
+              <textarea
+                id="postTextarea"
+                placeholder="Post something to share with the world"
+              ></textarea>
+              <div class="buttonsContainer">
+                <button id="submitPostButton" disabled>Post</button>
+                <button id="speakPostButton" onclick="runSpeechRecogForPost()" style="color: #156100; font-weight: bold;">Speak</button>
+              </div>
+            </div>
+          </div>
+          <!-- code from mixin createPostForm over-->
+
+          <div class="postsContainer">
+           
+          </div>
+          <!-- code from mixin createPostModals -->
+
+          <!-- Code from Reply Modal -->
+          <div
+            id="replyModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="replyModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="replyModalLabel" class="modal-title">Reply</h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div id="originalPostContainer"></div>
+                  <div class="postFormContainer">
+                    <div class="userImageContainer">
+                      <img
+                        src="/images/profilePic.jpeg"
+                        alt="User's profile picture"
+                      />
+                    </div>
+                    <div class="textareaContainer">
+                      <textarea
+                        id="replyTextarea"
+                        placeholder="Comment something"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    id="submitReplyButton"
+                    class="btn btn-primary"
+                    type="button"
+                    disabled
+                  >
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- code from reply modal over  -->
+
+          <!-- Delete Post Modal -->
+          <div
+            id="deletePostModal"
+            class="modal fade"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="deletePostModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 id="deletePostModalLabel" class="modal-title">
+                    Delete the post?
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>You won't be able to delete this.</p>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    id="deletePostButton"
+                    class="btn btn-primary"
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- code from delete post modal over -->
+
+          <!-- code from mixin createPostModals over-->
+          <!-- Content from block content over -->
+        </div>
+        <div class="d-none d-md-block col-md-2 col-lg-2"></div>
+      </div>
+    </div>
+    <div id="notificationList"></div>
+    
+    <!-- Code from block scripts -->
+    <script src="/js/home.js"></script>
+    <!-- Code from block scripts over -->
+    <script>
+      runSpeechRecogForPost = () => {
+        //  document.getElementById("output").innerHTML = "Loading...";
+         var postTextSpeak = document.getElementById('postTextarea');
+         var speakButtonContent = document.getElementById('speakPostButton');
+         let recognizationForSpeechForPost = new webkitSpeechRecognition();
+         recognizationForSpeechForPost.onstart = () => {
+            speakButtonContent.innerHTML = "Listening...";
+         }
+         recognizationForSpeechForPost.onresult = (e) => {
+            var transcriptOfSpeech = e.results[0][0].transcript;
+            postTextSpeak.innerHTML = postTextSpeak.innerHTML + transcriptOfSpeech;
+            speakButtonContent.innerHTML = "Speak";
+            
+         }
+         recognizationForSpeechForPost.start();
+      }
+   </script>
+    <!-- default scripts in layout-min file  -->
+    <script src="/js/common.js"></script>
+    <script src="/js/clientSocket.js"></script>
+    <!-- default scripts in layout-min file over -->
+    <!-- <script src="/js/all.js"></script> -->
+  </body>
+</html>

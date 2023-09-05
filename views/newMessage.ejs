@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- title has been set manually instead of dynamically, in your pug tempalte you was actually trying to insert the value of a variable dynamically  -->
+
+    <title>Message Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- main css link update -->
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="row">
+            <%- include('./partials/sideBar'); %>
+            <div class="mainSectionContainer col-10 col-md-8 col-lg-8">
+                <div class="titleContainer">
+                    <!-- value of heading has been set manually instead of dynamically -->
+                    <h1>Message Page</h1>
+                </div>
+                <div class="content">
+                    <!-- code from block content -->
+                    <div class="chatPageContainer">
+                        <div class="chatTitleBar">
+                            <label for="userSearchTextbox">To:</label>
+                            <div id="selectedUsers">
+                                <input id="userSearchTextbox" type="text" placeholder="Type the name of the person">
+                            </div>
+                        </div>
+                        <div class="resultsContainer">
+                            <button id="createChatButton" disabled>Create chat</button>
+                        </div>
+                    </div>                    
+                    <!-- Content from block content over -->
+
+                </div>
+              
+            </div>
+            <div class="d-none d-md-block col-md-2 col-lg-2"></div>
+        </div>
+    </div>
+    <div id="notificationList"></div>
+
+    <!-- default scripts in layout-min file  -->
+    <script src="/js/common.js"></script>
+    <script src="/js/clientSocket.js"></script>
+    <!-- default scripts in layout-min file over -->
+
+</body>
+
+</html>
