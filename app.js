@@ -37,8 +37,6 @@ app.use("/register", require('./routes/registerRoutes'));
 app.use("/logout", require('./routes/logout'));
 app.use("/posts", middleware.checkIfUserLoggedIn, require('./routes/postRoutes'));
 app.use("/profile", middleware.checkIfUserLoggedIn, require('./routes/profileRoutes'));
-app.use("/uploads", require('./routes/uploadRoutes'));
-app.use("/search", middleware.checkIfUserLoggedIn, require('./routes/searchRoutes'));
 app.use("/messages", middleware.checkIfUserLoggedIn, require('./routes/messagesRoutes'));
 app.use("/notifications", middleware.checkIfUserLoggedIn, require('./routes/notificationRoutes'));
 

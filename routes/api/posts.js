@@ -132,51 +132,6 @@ router.put("/:id/like", async (req, res, next) => {
     res.status(200).send(post)
 })
 
-router.post("/:id/retweet", async (req, res, next) => {
-    var postId = req.params.id;
-    var userId = req.session.user._id;
-
-    // Try and delete retweet
-    var deletedPost = await Post.findOneAndDelete({ postedBy: userId, retweetData: postId })
-    .catch(error => {
-        console.log(error);
-        res.sendStatus(400);
-    })
-
-    var option = deletedPost != null ? "$pull" : "$addToSet";
-
-    var repost = deletedPost;
-
-    if (repost == null) {
-        repost = await Post.create({ postedBy: userId, retweetData: postId })
-        .catch(error => {
-            console.log(error);
-            res.sendStatus(400);
-        })
-    }
-
-    // Insert user like
-    req.session.user = await User.findByIdAndUpdate(userId, { [option]: { retweets: repost._id } }, { new: true })
-    .catch(error => {
-        console.log(error);
-        res.sendStatus(400);
-    })
-
-    // Insert post like
-    var post = await Post.findByIdAndUpdate(postId, { [option]: { retweetUsers: userId } }, { new: true })
-    .catch(error => {
-        console.log(error);
-        res.sendStatus(400);
-    })
-
-    if(!deletedPost) {
-        await Notification.insertNotification(post.postedBy, userId, "retweet", post._id);
-    }
-
-
-    res.status(200).send(post)
-})
-
 router.delete("/:id", (req, res, next) => {
     Post.findByIdAndDelete(req.params.id)
     .then(() => res.sendStatus(202))
@@ -207,13 +162,12 @@ router.put("/:id", async (req, res, next) => {
 async function getPosts(filter) {
     var results = await Post.find(filter)
     .populate("postedBy")
-    .populate("retweetData")
     .populate("replyTo")
     .sort({ "createdAt": -1 })
     .catch(error => console.log(error))
 
     results = await User.populate(results, { path: "replyTo.postedBy"})
-    return await User.populate(results, { path: "retweetData.postedBy"});
+    return results;
 }
 
 module.exports = router;

@@ -168,26 +168,6 @@ $("#filePhoto").change(function(){
     }
 })
 
-$("#coverPhoto").change(function(){    
-    if(this.files && this.files[0]) {
-        var reader = new FileReader();
-        reader.onload = (e) => {
-            var image = document.getElementById("coverPreview");
-            image.src = e.target.result;
-
-            if(cropper !== undefined) {
-                cropper.destroy();
-            }
-
-            cropper = new Cropper(image, {
-                aspectRatio: 16 / 9,
-                background: false
-            });
-
-        }
-        reader.readAsDataURL(this.files[0]);
-    }
-})
 
 $("#imageUploadButton").click(() => {
     var canvas = cropper.getCroppedCanvas();
@@ -212,28 +192,6 @@ $("#imageUploadButton").click(() => {
     })
 })
 
-$("#coverPhotoButton").click(() => {
-    var canvas = cropper.getCroppedCanvas();
-
-    if(canvas == null) {
-        alert("Could not upload image. Make sure it is an image file.");
-        return;
-    }
-
-    canvas.toBlob((blob) => {
-        var formData = new FormData();
-        formData.append("croppedImage", blob);
-
-        $.ajax({
-            url: "/api/users/coverPhoto",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: () => location.reload()
-        })
-    })
-})
 
 $("#userSearchTextbox").keydown((event) => {
     clearTimeout(timer);
@@ -398,10 +356,6 @@ function findPostId(component) {
 function makeAPost(postInformation, useBigFont = false) {
 
     if(postInformation == null) return alert("post object is null");
-
-    var isRetweet = postInformation.retweetData !== undefined;
-    var retweetedBy = isRetweet ? postInformation.postedBy.username : null;
-    postInformation = isRetweet ? postInformation.retweetData : postInformation;
     
     var authorOfPost = postInformation.postedBy;
 
@@ -414,14 +368,6 @@ function makeAPost(postInformation, useBigFont = false) {
 
     var alreadyLiked = postInformation.likes.includes(userLoggedIn._id) ? "active" : "";
     var bigFont = useBigFont ? "largeFont" : "";
-
-    var retweetText = '';
-    if(isRetweet) {
-        retweetText = `<span>
-                        <i class='fas fa-retweet'></i>
-                        Retweeted by <a href='/profile/${retweetedBy}'>@${retweetedBy}</a>    
-                    </span>`
-    }
 
     var replyFlag = "";
     if(postInformation.replyTo && postInformation.replyTo._id) {
@@ -443,9 +389,6 @@ function makeAPost(postInformation, useBigFont = false) {
     var buttons = "";
     
     return `<div class='post ${bigFont}' data-id='${postInformation._id}'>
-                <div class='postActionContainer'>
-                    ${retweetText}
-                </div>
                 <div class='mainContentContainer'>
                     <div class='userImageContainer'>
                         <img src='${authorOfPost.profilePic}'>
@@ -742,10 +685,7 @@ function notiText(noti) {
     
     var notiTextDetail;
 
-    if(noti.notificationType == "retweet") {
-        notiTextDetail = `${notiUserName} retweeted one of your posts`;
-    }
-    else if(noti.notificationType == "postLike") {
+    if(noti.notificationType == "postLike") {
         notiTextDetail = `${notiUserName} liked one of your posts`;
     }
     else if(noti.notificationType == "reply") {
@@ -761,8 +701,7 @@ function notiText(noti) {
 function notiUrl(noti) { 
     var url = "#";
 
-    if(noti.notificationType == "retweet" || 
-        noti.notificationType == "postLike" || 
+    if( noti.notificationType == "postLike" || 
         noti.notificationType == "reply") {
             
         url = `/posts/${noti.entityId}`;
