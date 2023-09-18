@@ -1,5 +1,5 @@
-var typing = false;
-var lastTypingTime;
+var eventOfTyping = false;
+var lastTypeTime;
 $(document).ready(() => {
 
     socket.emit("join room", chatId);
@@ -10,18 +10,18 @@ $(document).ready(() => {
 
     $.get(`/api/chats/${chatId}/messages`, (data) => {
         
-        var messages = [];
-        var lastSenderId = "";
+        var messageArray = [];
+        var IDLast = "";
 
         data.forEach((message, index) => {
-            var html = createMessageHtml(message, data[index + 1], lastSenderId);
-            messages.push(html);
+            var htmlHolder = createMessageHtml(message, data[index + 1], IDLast);
+            messageArray.push(htmlHolder);
 
-            lastSenderId = message.sender._id;
+            IDLast = message.sender._id;
         })
 
-        var messagesHtml = messages.join("");
-        addMessagesHtmlToPage(messagesHtml);
+        var msgHTML = messageArray.join("");
+        addMessagesHtmlToPage(msgHTML);
         scrollToBottom(false);
         markAllMessagesAsRead();
 
@@ -65,21 +65,21 @@ $(".inputTextbox").keydown((event) => {
 function updateTyping() {
     if(!connected) return;
 
-    if(!typing) {
-        typing = true;
+    if(!eventOfTyping) {
+        eventOfTyping = true;
         socket.emit("typing", chatId);
     }
 
-    lastTypingTime = new Date().getTime();
+    lastTypeTime = new Date().getTime();
     var timerLength = 3000;
 
     setTimeout(() => {
         var timeNow = new Date().getTime();
-        var timeDiff = timeNow - lastTypingTime;
+        var timeDiff = timeNow - lastTypeTime;
 
-        if(timeDiff >= timerLength && typing) {
+        if(timeDiff >= timerLength && eventOfTyping) {
             socket.emit("stop typing", chatId);
-            typing = false;
+            eventOfTyping = false;
         }
     }, timerLength);
 }
@@ -95,7 +95,7 @@ function messageSubmitted() {
         sendMessage(content);
         $(".inputTextbox").val("");
         socket.emit("stop typing", chatId);
-        typing = false;
+        eventOfTyping = false;
     }
 }
 
